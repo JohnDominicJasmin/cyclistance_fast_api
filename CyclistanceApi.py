@@ -1,10 +1,7 @@
-from ast import Str
-from audioop import add
-from datetime import date
-from lib2to3.pgen2.token import OP
-from re import S
-from unicodedata import name
 
+
+from calendar import c
+from lib2to3.pgen2.token import OP
 from fastapi import FastAPI, Path
 from pydantic import BaseModel
 from typing import Optional
@@ -53,13 +50,13 @@ def create_user(user: User):
     users[user.id] = user
     return users[user.id]
         
-@app.put("/update-user/{user.id}")
+@app.put("/update-user")
 def update_user(user:UpdateUser):
     if user.id not in users:
         return {"Error": "Item ID does not exist!"}
 
     if user.id != None:
-        users[user.id].id = user.id    
+        users[user.id].id = user.id
 
     if user.name != None:
         users[user.id].name = user.name
@@ -71,9 +68,9 @@ def update_user(user:UpdateUser):
         users[user.id].location = user.location    
 
     return users[user.id]
-#Add post and put method
 
 
+#Add Delete FUnction
 
 
 
@@ -108,17 +105,23 @@ class UserAssistance(BaseModel):
     confirmationDetails: ConfirmationDetail
     status:Status
 
+class UpdateUserAssistance(BaseModel):
+    id:Optional[str] = None    
+    date:Optional[str] = None    
+    confirmationDetails:Optional[ConfirmationDetail] = None    
+    status:Optional[Status] = None    
+
 users_assistance = {}
 
 
-@app.get("/get-assistance-by-id")
+@app.get("/get-user-assistance-by-id")
 def get_assistance_by_id(user_id: str):
     for item_id in users:
         if users_assistance[item_id].id == user_id:
             return users_assistance[item_id]
     return {"Data" : "Not Found"}        
 
-@app.get("/get-assistance")
+@app.get("/get-user-assistance")
 def get_assistance(): 
     return users_assistance
 
@@ -129,6 +132,26 @@ def create_user_assistance(assistance: UserAssistance):
     users_assistance[assistance.id] = assistance
     return users_assistance[assistance.id]
 
+@app.put("/update-user-assistance")
+def update_user_assistance(user: UpdateUserAssistance):
+    
+    if user.id not in users_assistance:
+        return {"Error":"Item does not exist"}
+
+    if user.id != None:
+        users_assistance[user.id].id = user.id
+
+    if user.date != None:
+        users_assistance[user.id].date = user.date
+
+    if user.confirmationDetails != None:
+        users_assistance[user.id].confirmationDetails = user.confirmationDetails     
+
+    if user.status != None:
+        users_assistance[user.id].status = user.status
+
+    return users_assistance[user.id]
+    
 #Add post and put method
 
 
@@ -141,6 +164,11 @@ class HelpRequest(BaseModel):
     date:str 
     accepted:bool
 
+class UpdateHelpRequest(BaseModel):
+    id:Optional[str] = None
+    client_id:Optional[str] = None 
+    date:Optional[str] = None 
+    accepted:Optional[bool] = None
 
 
 help_request = {}
@@ -163,6 +191,29 @@ def create_help_request(request: HelpRequest):
     help_request[request.id] = request    
     return help_request[request.id]
 
+@app.put("/update-help-request")
+def update_help_request(request: UpdateHelpRequest):
+
+    if request.id not in help_request:
+        return {"Error":"Item does not exist"}
+
+    if request.id != None:
+        help_request[request.id].id = request.id
+
+    if request.client_id != None:
+        help_request[request.id].client_id = request.client_id
+
+    if request.date != None:
+        help_request[request.id].date = request.date
+
+    if request.accepted != None:
+        help_request[request.id].accepted = request.accepted    
+
+    return help_request[request.id]        
+
+
+
+
 #Add post and put method
 
 
@@ -181,7 +232,10 @@ class Response(BaseModel):
     date:str
     respondents:list[Respondent]
     
-
+class UpdateResponse(BaseModel):
+    id:Optional[str] = None
+    date:Optional[str] = None
+    respondents:Optional[list[Respondent]] = None 
 
 respondents = {}
 
@@ -192,7 +246,7 @@ def get_respondents_by_id(id:str):
             return respondents[item_id]
     return {"Data":"Not Found"}        
 
-@app.post("/create-responce")
+@app.post("/create-response")
 def create_respondent(response: Response):
     if response.id in respondents:
         return {"Error": "Responce Id Already Exist."} 
@@ -204,7 +258,29 @@ def create_respondent(response: Response):
     return respondents[response.id]
 
 
-#Add post and put method
+@app.put("/update-response")
+def update_respondent(response: UpdateResponse):
+    
+    if response.id not in respondents:
+        return {"Data":"Item does not exist."}
+
+    if response.id != None:
+        respondents[response.id].id = response.id
+
+    if response.date != None:
+        respondents[response.id].date = response.date     
+
+    if response.respondents != None: 
+        respondents[response.id].respondents = response.respondents       
+
+    return respondents[response.id]        
+
+
+    #on update function remove id 
+    
+    #Add post and put method
+
+
 
 
 
@@ -226,20 +302,27 @@ class CancellationReason(BaseModel):
 class Cancellation(BaseModel):
     id:str
     client_id:str 
+    date:str
     cancellation_reason:list[CancellationReason]
+
+class UpdateCancellation(BaseModel):
+    id:Optional[str] = None 
+    client_id:Optional[str] = None
+    date:Optional[str] = None
+    cancellation_reason:Optional[list[CancellationReason]] = None
 
 
 
 cancellations = {}
 
-@app.get("/get-cancellation-reason  ")
+@app.get("/get-cancellation-reason")
 def get_cancellations(id:str, clientId:str):
     for item_id in cancellations:
         if cancellations[item_id].id == id and cancellations[item_id].client_id == clientId:
             return cancellations[item_id]
     return {"Data":"Not Found"}        
     
-@app.post("/create-cancellation")
+@app.post("/create-cancellation-reason")
 def create_cancellation(cancellation: Cancellation):
     if cancellation.id in cancellations:
         return {"Error": "Id Already Exist."} 
@@ -247,6 +330,23 @@ def create_cancellation(cancellation: Cancellation):
     cancellations[cancellation.id] = cancellation    
     return cancellations[cancellation.id]
     
+@app.put("/update-cancellation-reason")
+def update_cancellation_reason(cancellation: UpdateCancellation):
+    if cancellation.id not in cancellations:
+        return {"Error": "Item ID does not exist."}
 
+    if cancellation.id != None:
+        cancellations[cancellation.id].id = cancellation.id
+
+    if cancellation.client_id != None:
+        cancellations[cancellation.id].client_id = cancellation.client_id
+
+    if cancellation.date != None:
+        cancellations[cancellation.id].date = cancellation.date    
+
+    if cancellation.cancellation_reason != None:
+        cancellations[cancellation.id].cancellation_reason = cancellation.cancellation_reason
+
+    return cancellations[cancellation.id]        
 
 # If returned result is already exist then edit the existing one
