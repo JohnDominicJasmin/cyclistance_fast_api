@@ -1,10 +1,13 @@
 from ast import Str
 from audioop import add
 from datetime import date
+from lib2to3.pgen2.token import OP
+from re import S
+from unicodedata import name
 
 from fastapi import FastAPI, Path
 from pydantic import BaseModel
-
+from typing import Optional
 
 
 app = FastAPI()
@@ -19,6 +22,13 @@ class User(BaseModel):
     name:str
     address:str
     location:Location
+
+
+class UpdateUser(BaseModel):
+    id:Optional[str] = None
+    name:Optional[str] = None
+    address:Optional[str] = None
+    location:Optional[Location] = None 
 
 #Filter Date and time
 
@@ -43,6 +53,24 @@ def create_user(user: User):
     users[user.id] = user
     return users[user.id]
         
+@app.put("/update-user/{user.id}")
+def update_user(user:UpdateUser):
+    if user.id not in users:
+        return {"Error": "Item ID does not exist!"}
+
+    if user.id != None:
+        users[user.id].id = user.id    
+
+    if user.name != None:
+        users[user.id].name = user.name
+
+    if user.address != None:
+        users[user.id].address = user.address    
+
+    if user.location != None:
+        users[user.id].location = user.location    
+
+    return users[user.id]
 #Add post and put method
 
 
@@ -148,7 +176,7 @@ def create_help_request(request: HelpRequest):
 class Respondent(BaseModel):
     id:str
 
-class Responce(BaseModel):
+class Response(BaseModel):
     id:str
     date:str
     respondents:list[Respondent]
@@ -165,15 +193,15 @@ def get_respondents_by_id(id:str):
     return {"Data":"Not Found"}        
 
 @app.post("/create-responce")
-def create_respondent(responce: Responce):
-    if responce.id in respondents:
+def create_respondent(response: Response):
+    if response.id in respondents:
         return {"Error": "Responce Id Already Exist."} 
 
-    if responce.id in responce.respondents:
+    if response.id in response.respondents:
         return {"Error":"You can't be a respondent to your own request."}
 
-    respondents[responce.id] = responce
-    return respondents[responce.id]
+    respondents[response.id] = response
+    return respondents[response.id]
 
 
 #Add post and put method
