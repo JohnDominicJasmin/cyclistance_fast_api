@@ -22,7 +22,6 @@ class User(BaseModel):
 
 
 class UpdateUser(BaseModel):
-    id:Optional[str] = None
     name:Optional[str] = None
     address:Optional[str] = None
     location:Optional[Location] = None 
@@ -51,23 +50,21 @@ def create_user(user: User):
     return users[user.id]
         
 @app.put("/update-user")
-def update_user(user:UpdateUser):
-    if user.id not in users:
+def update_user(item_id:str, user:UpdateUser):
+
+    if item_id not in users:
         return {"Error": "Item ID does not exist!"}
 
-    if user.id != None:
-        users[user.id].id = user.id
-
     if user.name != None:
-        users[user.id].name = user.name
+        users[item_id].name = user.name
 
     if user.address != None:
-        users[user.id].address = user.address    
+        users[item_id].address = user.address    
 
     if user.location != None:
-        users[user.id].location = user.location    
+        users[item_id].location = user.location    
 
-    return users[user.id]
+    return users[item_id]
 
 
 #Add Delete FUnction
@@ -106,7 +103,6 @@ class UserAssistance(BaseModel):
     status:Status
 
 class UpdateUserAssistance(BaseModel):
-    id:Optional[str] = None    
     date:Optional[str] = None    
     confirmationDetails:Optional[ConfirmationDetail] = None    
     status:Optional[Status] = None    
@@ -133,24 +129,21 @@ def create_user_assistance(assistance: UserAssistance):
     return users_assistance[assistance.id]
 
 @app.put("/update-user-assistance")
-def update_user_assistance(user: UpdateUserAssistance):
+def update_user_assistance(item_id: str, user: UpdateUserAssistance):
     
-    if user.id not in users_assistance:
+    if item_id not in users_assistance:
         return {"Error":"Item does not exist"}
-
-    if user.id != None:
-        users_assistance[user.id].id = user.id
-
+ 
     if user.date != None:
-        users_assistance[user.id].date = user.date
+        users_assistance[item_id].date = user.date
 
     if user.confirmationDetails != None:
-        users_assistance[user.id].confirmationDetails = user.confirmationDetails     
+        users_assistance[item_id].confirmationDetails = user.confirmationDetails     
 
     if user.status != None:
-        users_assistance[user.id].status = user.status
+        users_assistance[item_id].status = user.status
 
-    return users_assistance[user.id]
+    return users_assistance[item_id]
     
 #Add post and put method
 
@@ -165,7 +158,7 @@ class HelpRequest(BaseModel):
     accepted:bool
 
 class UpdateHelpRequest(BaseModel):
-    id:Optional[str] = None
+     
     client_id:Optional[str] = None 
     date:Optional[str] = None 
     accepted:Optional[bool] = None
@@ -192,24 +185,21 @@ def create_help_request(request: HelpRequest):
     return help_request[request.id]
 
 @app.put("/update-help-request")
-def update_help_request(request: UpdateHelpRequest):
+def update_help_request(item_id:str, request: UpdateHelpRequest):
 
-    if request.id not in help_request:
+    if item_id not in help_request:
         return {"Error":"Item does not exist"}
 
-    if request.id != None:
-        help_request[request.id].id = request.id
-
     if request.client_id != None:
-        help_request[request.id].client_id = request.client_id
+        help_request[item_id].client_id = request.client_id
 
     if request.date != None:
-        help_request[request.id].date = request.date
+        help_request[item_id].date = request.date
 
     if request.accepted != None:
-        help_request[request.id].accepted = request.accepted    
+        help_request[item_id].accepted = request.accepted    
 
-    return help_request[request.id]        
+    return help_request[item_id]        
 
 
 
@@ -233,7 +223,7 @@ class Response(BaseModel):
     respondents:list[Respondent]
     
 class UpdateResponse(BaseModel):
-    id:Optional[str] = None
+   
     date:Optional[str] = None
     respondents:Optional[list[Respondent]] = None 
 
@@ -259,21 +249,19 @@ def create_respondent(response: Response):
 
 
 @app.put("/update-response")
-def update_respondent(response: UpdateResponse):
+def update_respondent(item_id:str, response: UpdateResponse):
     
-    if response.id not in respondents:
+    if item_id not in respondents:
         return {"Data":"Item does not exist."}
 
-    if response.id != None:
-        respondents[response.id].id = response.id
 
     if response.date != None:
-        respondents[response.id].date = response.date     
+        respondents[item_id].date = response.date     
 
     if response.respondents != None: 
-        respondents[response.id].respondents = response.respondents       
+        respondents[item_id].respondents = response.respondents       
 
-    return respondents[response.id]        
+    return respondents[item_id]        
 
 
     #on update function remove id 
@@ -306,7 +294,6 @@ class Cancellation(BaseModel):
     cancellation_reason:list[CancellationReason]
 
 class UpdateCancellation(BaseModel):
-    id:Optional[str] = None 
     client_id:Optional[str] = None
     date:Optional[str] = None
     cancellation_reason:Optional[list[CancellationReason]] = None
@@ -331,22 +318,19 @@ def create_cancellation(cancellation: Cancellation):
     return cancellations[cancellation.id]
     
 @app.put("/update-cancellation-reason")
-def update_cancellation_reason(cancellation: UpdateCancellation):
-    if cancellation.id not in cancellations:
+def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
+    if item_id not in cancellations:
         return {"Error": "Item ID does not exist."}
 
-    if cancellation.id != None:
-        cancellations[cancellation.id].id = cancellation.id
-
     if cancellation.client_id != None:
-        cancellations[cancellation.id].client_id = cancellation.client_id
+        cancellations[item_id].client_id = cancellation.client_id
 
     if cancellation.date != None:
-        cancellations[cancellation.id].date = cancellation.date    
+        cancellations[item_id].date = cancellation.date    
 
     if cancellation.cancellation_reason != None:
-        cancellations[cancellation.id].cancellation_reason = cancellation.cancellation_reason
+        cancellations[item_id].cancellation_reason = cancellation.cancellation_reason
 
-    return cancellations[cancellation.id]        
+    return cancellations[item_id]        
 
 # If returned result is already exist then edit the existing one
