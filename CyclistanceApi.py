@@ -2,7 +2,8 @@
 
 from calendar import c
 from lib2to3.pgen2.token import OP
-from fastapi import FastAPI, Path
+from queue import Queue
+from fastapi import FastAPI, Path, Query, HTTPException, status
 from pydantic import BaseModel
 from typing import Optional
 
@@ -66,6 +67,14 @@ def update_user(item_id:str, user:UpdateUser):
 
     return users[item_id]
 
+@app.delete("/delete-user")
+def delete_user(item_id:str = Query(..., description = "The id item to delete.")): 
+    if item_id not in users:
+        return {"Error":"Id does not exist."}
+
+    del users[item_id]
+    return {"Success":"Item Deleted!"}
+
 
 #Add Delete FUnction
 
@@ -77,7 +86,7 @@ def update_user(item_id:str, user:UpdateUser):
 
 
 
-
+#Filter getting nearby location using lat lng 
 
 
 
@@ -145,7 +154,17 @@ def update_user_assistance(item_id: str, user: UpdateUserAssistance):
 
     return users_assistance[item_id]
     
-#Add post and put method
+@app.delete("/delete-user-assistance")
+def delete_user_assistance(item_id:str = Query(..., description = "The id item to delete.")):
+    if item_id not in users_assistance: 
+        return {"Error":"User does not exist"}
+
+    del users_assistance[item_id]  
+    return {"Success":"Successfully Deleted!"} 
+
+
+
+
 
 
 
@@ -201,6 +220,13 @@ def update_help_request(item_id:str, request: UpdateHelpRequest):
 
     return help_request[item_id]        
 
+@app.delete("delete-help-request")
+def delete_help_request(item_id:str = Query(..., description = "The id item to delete.")):
+    if item_id not in help_request:
+        return {"Error":"Item does not exist."}
+
+    del help_request[item_id]
+    return {"Success":"Successfully Deleted."}    
 
 
 
@@ -263,18 +289,16 @@ def update_respondent(item_id:str, response: UpdateResponse):
 
     return respondents[item_id]        
 
+@app.delete("/delete-response")
+def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
+    if item_id not in respondents:
+        return {"Error":"Item does not exist."}
 
+    del respondents[item_id]
+    return {"Success":"Successfull Deleted."}
     #on update function remove id 
-    
+    #delete date params for
     #Add post and put method
-
-
-
-
-
-
-
-
 
 
 
@@ -333,4 +357,11 @@ def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
 
     return cancellations[item_id]        
 
+@app.delete("/delete-cancellation-reason")
+def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
+    if item_id not in cancellations:
+        return {"Error":"Item does not exist."}
+
+    del cancellations[item_id]
+    return {"Success":"Successfull Deleted."}
 # If returned result is already exist then edit the existing one
