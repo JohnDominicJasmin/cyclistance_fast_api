@@ -107,12 +107,10 @@ class Status(BaseModel):
 
 class UserAssistance(BaseModel):
     id:str
-    date:str
     confirmationDetails: ConfirmationDetail
     status:Status
 
 class UpdateUserAssistance(BaseModel):
-    date:Optional[str] = None    
     confirmationDetails:Optional[ConfirmationDetail] = None    
     status:Optional[Status] = None    
 
@@ -143,9 +141,6 @@ def update_user_assistance(item_id: str, user: UpdateUserAssistance):
     if item_id not in users_assistance:
         return {"Error":"Item does not exist"}
  
-    if user.date != None:
-        users_assistance[item_id].date = user.date
-
     if user.confirmationDetails != None:
         users_assistance[item_id].confirmationDetails = user.confirmationDetails     
 
@@ -173,13 +168,11 @@ def delete_user_assistance(item_id:str = Query(..., description = "The id item t
 class HelpRequest(BaseModel):
     id:str
     client_id:str 
-    date:str 
     accepted:bool
 
 class UpdateHelpRequest(BaseModel):
      
     client_id:Optional[str] = None 
-    date:Optional[str] = None 
     accepted:Optional[bool] = None
 
 
@@ -212,9 +205,6 @@ def update_help_request(item_id:str, request: UpdateHelpRequest):
     if request.client_id != None:
         help_request[item_id].client_id = request.client_id
 
-    if request.date != None:
-        help_request[item_id].date = request.date
-
     if request.accepted != None:
         help_request[item_id].accepted = request.accepted    
 
@@ -245,12 +235,9 @@ class Respondent(BaseModel):
 
 class Response(BaseModel):
     id:str
-    date:str
     respondents:list[Respondent]
     
 class UpdateResponse(BaseModel):
-   
-    date:Optional[str] = None
     respondents:Optional[list[Respondent]] = None 
 
 respondents = {}
@@ -279,10 +266,6 @@ def update_respondent(item_id:str, response: UpdateResponse):
     
     if item_id not in respondents:
         return {"Data":"Item does not exist."}
-
-
-    if response.date != None:
-        respondents[item_id].date = response.date     
 
     if response.respondents != None: 
         respondents[item_id].respondents = response.respondents       
@@ -314,12 +297,10 @@ class CancellationReason(BaseModel):
 class Cancellation(BaseModel):
     id:str
     client_id:str 
-    date:str
     cancellation_reason:list[CancellationReason]
 
 class UpdateCancellation(BaseModel):
     client_id:Optional[str] = None
-    date:Optional[str] = None
     cancellation_reason:Optional[list[CancellationReason]] = None
 
 
@@ -348,9 +329,6 @@ def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
 
     if cancellation.client_id != None:
         cancellations[item_id].client_id = cancellation.client_id
-
-    if cancellation.date != None:
-        cancellations[item_id].date = cancellation.date    
 
     if cancellation.cancellation_reason != None:
         cancellations[item_id].cancellation_reason = cancellation.cancellation_reason
