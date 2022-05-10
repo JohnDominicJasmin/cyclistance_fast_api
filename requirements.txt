@@ -5,7 +5,7 @@ appdirs==1.4.4
 asgiref==3.5.0
 #btrfsutil==5.16.2
 CacheControl==0.12.6
-ceph==1.0.0
+#ceph==1.0.0
 ceph-volume==1.0.0
 cephfs==2.0.0
 cephfs-shell==0.0.1
