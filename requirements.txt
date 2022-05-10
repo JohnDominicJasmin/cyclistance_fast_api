@@ -16,7 +16,7 @@ click==8.1.2
 colorama==0.4.4
 contextlib2==0.6.0.post1
 cryptography==36.0.1
-cupshelpers==1.0
+#cupshelpers==1.0
 Cython==0.29.28
 distlib==0.3.4
 distro==1.7.0
