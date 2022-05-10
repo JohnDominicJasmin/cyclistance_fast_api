@@ -32,7 +32,7 @@ idna==3.3
 importlib-metadata==4.8.1
 keyutils==0.6
 #LibAppArmor==3.0.4
-lit==13.0.1.dev0
+lit==14.0.0
 louis==3.21.0
 lxml==4.7.1
 manjaro-sdk==0.1
