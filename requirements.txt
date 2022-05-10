@@ -35,7 +35,7 @@ keyutils==0.6
 lit==14.0.0
 louis==1.3
 lxml==4.7.1
-manjaro-sdk==0.1
+# manjaro-sdk==0.1
 Markdown==3.3.6
 more-itertools==8.10.0
 msgpack==1.0.3
