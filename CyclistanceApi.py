@@ -37,7 +37,7 @@ users = {}
 @app.get("/get-user-by-id/{user_id}")
 def get_user_by_id(user_id: str):
     for item_id in users: 
-        if users[item_id].name == user_id: 
+        if users[item_id].id == user_id: 
             return users[item_id]
     raise HTTPException(status_code=404, detail="User not found")
 
@@ -119,7 +119,7 @@ users_assistance = {}
 
 @app.get("/get-user-assistance-by-id/{user_id}")
 def get_assistance_by_id(user_id: str):
-    for item_id in users:
+    for item_id in users_assistance:
         if users_assistance[item_id].id == user_id:
             return users_assistance[item_id]
     raise HTTPException(status_code=404, detail="User not found!")
