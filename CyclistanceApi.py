@@ -34,7 +34,7 @@ class UpdateUser(BaseModel):
 users = {}
 
 
-@app.get("/get-user-by-id")
+@app.get("/get-user-by-id/{user_id}")
 def get_user_by_id(user_id: str):
     for item_id in users: 
         if users[item_id].name == user_id: 
@@ -52,7 +52,7 @@ def create_user(user: User):
     users[user.id] = user
     return users[user.id]
         
-@app.put("/update-user")
+@app.put("/update-user/{item_id}")
 def update_user(item_id:str, user:UpdateUser):
 
     if item_id not in users:
@@ -69,7 +69,7 @@ def update_user(item_id:str, user:UpdateUser):
 
     return users[item_id]
 
-@app.delete("/delete-user")
+@app.delete("/delete-user/{item_id}")
 def delete_user(item_id:str = Query(..., description = "The id item to delete.")): 
     if item_id not in users:
         raise HTTPException(status_code=404, detail="User not found")
@@ -117,7 +117,7 @@ class UpdateUserAssistance(BaseModel):
 users_assistance = {}
 
 
-@app.get("/get-user-assistance-by-id")
+@app.get("/get-user-assistance-by-id/{user_id}")
 def get_assistance_by_id(user_id: str):
     for item_id in users:
         if users_assistance[item_id].id == user_id:
@@ -135,7 +135,7 @@ def create_user_assistance(assistance: UserAssistance):
     users_assistance[assistance.id] = assistance
     return users_assistance[assistance.id]
 
-@app.put("/update-user-assistance")
+@app.put("/update-user-assistance/{item_id}")
 def update_user_assistance(item_id: str, user: UpdateUserAssistance):
     
     if item_id not in users_assistance:
@@ -149,7 +149,7 @@ def update_user_assistance(item_id: str, user: UpdateUserAssistance):
 
     return users_assistance[item_id]
     
-@app.delete("/delete-user-assistance")
+@app.delete("/delete-user-assistance/{item_id}")
 def delete_user_assistance(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in users_assistance: 
         raise HTTPException(status_code=404, detail="User not found.")
@@ -182,7 +182,7 @@ help_request = {}
 def get_help_requests(): 
     return help_request
 
-@app.get("/get-help-request-by-id")
+@app.get("/get-help-request-by-id/{id}")
 def get_help_request_by_id(id:str, client_id:str): 
     for item_id in help_request: 
         if help_request[item_id].id == id and help_request[item_id].client_id == client_id:
@@ -196,7 +196,7 @@ def create_help_request(request: HelpRequest):
     help_request[request.id] = request    
     return help_request[request.id]
 
-@app.put("/update-help-request")
+@app.put("/update-help-request/{item_id}")
 def update_help_request(item_id:str, request: UpdateHelpRequest):
 
     if item_id not in help_request:
@@ -210,7 +210,7 @@ def update_help_request(item_id:str, request: UpdateHelpRequest):
 
     return help_request[item_id]        
 
-@app.delete("delete-help-request")
+@app.delete("delete-help-request/{item_id}")
 def delete_help_request(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in help_request:
         raise HTTPException(status_code=404, detail="Item does not exist.")
@@ -241,7 +241,7 @@ class UpdateResponse(BaseModel):
 
 respondents = {}
 
-@app.get("/get-respondents-by-id")
+@app.get("/get-respondents-by-id/{id}")
 def get_respondents_by_id(id:str): 
     for item_id in respondents:
         if respondents[item_id].id == id:
@@ -260,7 +260,7 @@ def create_respondent(response: Response):
     return respondents[response.id]
 
 
-@app.put("/update-response")
+@app.put("/update-response/{item_id}")
 def update_respondent(item_id:str, response: UpdateResponse):
     
     if item_id not in respondents:
@@ -271,7 +271,7 @@ def update_respondent(item_id:str, response: UpdateResponse):
 
     return respondents[item_id]        
 
-@app.delete("/delete-response")
+@app.delete("/delete-response/{item_id}")
 def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in respondents:
         raise HTTPException(status_code=404, detail="User not found.")
@@ -303,7 +303,7 @@ class UpdateCancellation(BaseModel):
 
 cancellations = {}
 
-@app.get("/get-cancellation-reason")
+@app.get("/get-cancellation-reason/{id}")
 def get_cancellations(id:str, clientId:str):
     for item_id in cancellations:
         if cancellations[item_id].id == id and cancellations[item_id].client_id == clientId:
@@ -318,7 +318,7 @@ def create_cancellation(cancellation: Cancellation):
     cancellations[cancellation.id] = cancellation    
     return cancellations[cancellation.id]
     
-@app.put("/update-cancellation-reason")
+@app.put("/update-cancellation-reason/{item_id}")
 def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
     if item_id not in cancellations:
         raise HTTPException(status_code=404,detail="User not found.")
@@ -331,11 +331,10 @@ def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
 
     return cancellations[item_id]        
 
-@app.delete("/delete-cancellation-reason")
+@app.delete("/delete-cancellation-reason/{item_id}")
 def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in cancellations:
         raise HTTPException(status_code=404,detail="Item does not exist.")
 
     del cancellations[item_id]
     return {"Success":"Successfully Deleted."}
-# If returned result is already exist then edit the existing one
