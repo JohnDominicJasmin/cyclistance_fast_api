@@ -124,7 +124,7 @@ def get_assistance_by_id(user_id: str):
             return users_assistance[item_id]
     raise HTTPException(status_code=404, detail="User not found!")
 
-@app.get("/get-user-assistance")
+@app.get("/get-users-assistance")
 def get_assistance(): 
     return users_assistance
 
@@ -182,7 +182,7 @@ help_request = {}
 def get_help_requests(): 
     return help_request
 
-@app.get("/get-help-request-by-id/{id}")
+@app.get("/get-help-request-by-id/{id},{client_id}")
 def get_help_request_by_id(id:str, client_id:str): 
     for item_id in help_request: 
         if help_request[item_id].id == id and help_request[item_id].client_id == client_id:
@@ -230,7 +230,7 @@ def delete_help_request(item_id:str = Query(..., description = "The id item to d
  
     
 class Respondent(BaseModel):
-    id:str
+    client_id:str
 
 class Response(BaseModel):
     id:str
@@ -303,10 +303,10 @@ class UpdateCancellation(BaseModel):
 
 cancellations = {}
 
-@app.get("/get-cancellation-reason/{id}")
-def get_cancellations(id:str, clientId:str):
+@app.get("/get-cancellation-reason/{id},{client_id}")
+def get_cancellations(id:str, client_id:str):
     for item_id in cancellations:
-        if cancellations[item_id].id == id and cancellations[item_id].client_id == clientId:
+        if cancellations[item_id].id == id and cancellations[item_id].client_id == client_id:
             return cancellations[item_id]
     raise HTTPException(status_code=404,detail="User not found.")
     
