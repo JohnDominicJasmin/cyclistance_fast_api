@@ -232,47 +232,47 @@ def delete_help_request(item_id:str = Query(..., description = "The id item to d
 class Respondent(BaseModel):
     client_id:str
 
-class Response(BaseModel):
+class RescueRequest(BaseModel):
     id:str
     respondents:list[Respondent]
     
-class UpdateResponse(BaseModel):
+class UpdateRescueRequest(BaseModel):
     respondents:Optional[list[Respondent]] = None 
 
 respondents = {}
 
-@app.get("/get-respondents-by-id/{id}")
-def get_respondents_by_id(id:str): 
+@app.get("/get-rescue_request-by-id/{id}")
+def get_rescue_request_by_id(id:str): 
     for item_id in respondents:
         if respondents[item_id].id == id:
             return respondents[item_id]
     raise HTTPException(status_code=404, detail="User not found")
 
-@app.post("/create-response")
-def create_respondent(response: Response):
-    if response.id in respondents:
+@app.post("/create-rescue-request")
+def create_rescue_request(rescueRequest: RescueRequest):
+    if rescueRequest.id in respondents:
         raise HTTPException(status_code=409, detail="Item already exists.")
 
-    if response.id in response.respondents:
+    if rescueRequest.id in rescueRequest.respondents:
         raise HTTPException(status_code=409, detail="You can't be a respondent to your own request.")
 
-    respondents[response.id] = response
-    return respondents[response.id]
+    respondents[rescueRequest.id] = rescueRequest
+    return respondents[rescueRequest.id]
 
 
-@app.put("/update-response/{item_id}")
-def update_respondent(item_id:str, response: UpdateResponse):
+@app.put("/update-rescue-request/{item_id}")
+def update_rescue_request(item_id:str, rescueRequest: UpdateRescueRequest):
     
     if item_id not in respondents:
         raise HTTPException(status_code=404, detail="User not found.")
 
-    if response.respondents != None: 
-        respondents[item_id].respondents = response.respondents       
+    if rescueRequest.respondents != None: 
+        respondents[item_id].respondents = rescueRequest.respondents       
 
     return respondents[item_id]        
 
-@app.delete("/delete-response/{item_id}")
-def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
+@app.delete("/delete-rescue-request/{item_id}")
+def delete_rescue_request(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in respondents:
         raise HTTPException(status_code=404, detail="User not found.")
 
@@ -332,7 +332,7 @@ def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
     return cancellations[item_id]        
 
 @app.delete("/delete-cancellation-reason/{item_id}")
-def delete_response(item_id:str = Query(..., description = "The id item to delete.")):
+def delete_rescue_request(item_id:str = Query(..., description = "The id item to delete.")):
     if item_id not in cancellations:
         raise HTTPException(status_code=404,detail="Item does not exist.")
 
