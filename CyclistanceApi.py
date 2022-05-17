@@ -5,10 +5,15 @@ from lib2to3.pgen2.token import OP
 from queue import Queue
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 app = FastAPI()
+
+
+def search_id_found(user_id, _list): 
+    return user_id in (list.id for list in _list)
+
 
 class Location(BaseModel):
     lat: str
@@ -27,19 +32,20 @@ class UpdateUser(BaseModel):
     address:Optional[str] = None
     location:Optional[Location] = None 
 
-#Filter Date and time
-#Filter getting nearby location using lat lng 
+#TODO:Filter getting nearby location using lat lng 
+#TODO: Create function for searching
+  
+users: List[User] = []
 
-
-users = {}
 
 
 @app.get("/get-user-by-id/{user_id}")
 def get_user_by_id(user_id: str):
-    for item_id in users: 
-        if users[item_id].id == user_id: 
-            return users[item_id]
-    raise HTTPException(status_code=404, detail="User not found")
+       for index, item in enumerate(users): 
+           if item.id == user_id: 
+               return users[index]
+          
+       raise HTTPException(status_code=404, detail="User not found")
 
 @app.get("/get-users")
 def get_users():
@@ -47,36 +53,53 @@ def get_users():
 
 @app.post("/create-user")
 def create_user(user: User):
-    if user.id in users:
+    if search_id_found(user.id, users):
         raise HTTPException(status_code=409, detail="User already exist")
-    users[user.id] = user
-    return users[user.id]
+
+    users.append(user)
+    return {"Success": "Successfully created user."}
         
+
+
+
+
+
+
 @app.put("/update-user/{item_id}")
 def update_user(item_id:str, user:UpdateUser):
 
-    if item_id not in users:
-        raise HTTPException(status_code=404, detail="User not found")
+    for index,item in enumerate(users): 
+        if item.id == item_id: 
 
-    if user.name != None:
-        users[item_id].name = user.name
+            if user.name != None:
+                users[index].name = user.name
 
-    if user.address != None:
-        users[item_id].address = user.address    
+            if user.address != None:
+                users[index].address = user.address    
 
-    if user.location != None:
-        users[item_id].location = user.location    
+            if user.location != None:
+                users[index].location = user.location    
 
-    return users[item_id]
+            return {"Success":"Successfully updated user."}
+
+        else: 
+            raise HTTPException(status_code=404, detail="User not found")
+
+  
+
+
+
+
 
 @app.delete("/delete-user/{item_id}")
 def delete_user(item_id:str = Query(..., description = "The id item to delete.")): 
-    if item_id not in users:
-        raise HTTPException(status_code=404, detail="User not found")
 
-    del users[item_id]
-    return {"Success":"Item Deleted!"}
+    for item in users:
+        if item.id == item_id: 
+            users.remove(item)  
+            return {"Success":"Item Deleted!"}
 
+    raise HTTPException(status_code=404, detail="Item not found")
 
 
 
