@@ -40,7 +40,7 @@ users: List[User] = []
 
 
 
-@app.get("/get-user-by-id/{user_id}")
+@app.get("/api/v1/get-user-by-id/{user_id}")
 def get_user_by_id(user_id: str):
        for index, item in enumerate(users): 
            if item.id == user_id: 
@@ -48,11 +48,11 @@ def get_user_by_id(user_id: str):
           
        raise HTTPException(status_code=404, detail="User not found")
 
-@app.get("/get-users")
-def get_users():
+@app.get("/api/v1/get-users")
+def get_users():    
     return users
 
-@app.post("/create-user")
+@app.post("/api/v1/create-user")
 def create_user(user: User):
     if search_id_found(user.id, users):
         raise HTTPException(status_code=409, detail="User already exist")
@@ -61,7 +61,7 @@ def create_user(user: User):
     return {"Success": "Successfully created User."}
 
 
-@app.put("/update-user/{item_id}")
+@app.put("/api/v1/update-user/{item_id}")
 def update_user(item_id:str, user:UpdateUser):
 
     for index,item in enumerate(users): 
@@ -83,7 +83,7 @@ def update_user(item_id:str, user:UpdateUser):
 
   
 
-@app.delete("/delete-user/{item_id}")
+@app.delete("/api/v1/delete-user/{item_id}")
 def delete_user(item_id:str = Query(..., description = "The id item to delete.")): 
 
     for item in users:
@@ -142,7 +142,7 @@ class UpdateUserAssistance(BaseModel):
 users_assistance:List[UserAssistance] = []
 
 
-@app.get("/get-user-assistance-by-id/{user_id}")
+@app.get("/api/v1/get-user-assistance-by-id/{user_id}")
 def get_assistance_by_id(user_id: str):
 
     for index, item in enumerate(users_assistance): 
@@ -151,11 +151,11 @@ def get_assistance_by_id(user_id: str):
 
     raise HTTPException(status_code=404, detail="User Assistance not found!")
     
-@app.get("/get-users-assistance")
+@app.get("/api/v1/get-users-assistance")
 def get_assistance(): 
     return users_assistance
 
-@app.post("/create-user-assistance")
+@app.post("/api/v1/create-user-assistance")
 def create_user_assistance(assistance: UserAssistance):
 
     if search_id_found(assistance.id, users_assistance):
@@ -165,7 +165,7 @@ def create_user_assistance(assistance: UserAssistance):
     return {"Success":"Successfully created User Assistance."}  
 
 
-@app.put("/update-user-assistance/{item_id}")
+@app.put("/api/v1/update-user-assistance/{item_id}")
 def update_user_assistance(item_id: str, user: UpdateUserAssistance):
  
     for index, item in enumerate(users_assistance): 
@@ -185,7 +185,7 @@ def update_user_assistance(item_id: str, user: UpdateUserAssistance):
     raise HTTPException(status_code=404, detail="User Assistance not found.")     
 
 
-@app.delete("/delete-user-assistance/{item_id}")
+@app.delete("/api/v1/delete-user-assistance/{item_id}")
 def delete_user_assistance(item_id:str = Query(..., description = "The id item to delete.")):
 
     for item in users_assistance: 
@@ -224,7 +224,7 @@ help_requests: List[HelpRequest] = []
 
 
 
-@app.get("/get-help-request-by-id/{id},{client_id}")
+@app.get("/api/v1/get-help-request-by-id/{id},{client_id}")
 def get_help_request_by_id(id:str, client_id:str): 
     for index, item in enumerate(help_requests):
         if item.id == id and item.client_id == client_id:
@@ -233,7 +233,7 @@ def get_help_request_by_id(id:str, client_id:str):
     raise HTTPException(status_code=404, detail="Help Request not found.")  
 
 
-@app.post("/create-help-request")
+@app.post("/api/v1/create-help-request")
 def create_help_request(request: HelpRequest):
 
     if search_id_found(request.id, help_requests):
@@ -242,7 +242,7 @@ def create_help_request(request: HelpRequest):
     help_requests.append(request)
     return {"Success":"Successfully created Help Request."}
 
-@app.put("/update-help-request/{item_id}")
+@app.put("/api/v1/update-help-request/{item_id}")
 def update_help_request(item_id:str, request: UpdateHelpRequest):
 
     for index, item in enumerate(help_requests):
@@ -258,7 +258,7 @@ def update_help_request(item_id:str, request: UpdateHelpRequest):
     
     raise HTTPException(status_code=404, detail="Help Request does not exist.")        
 
-@app.delete("/delete-help-request/{item_id}")
+@app.delete("/api/v1/delete-help-request/{item_id}")
 def delete_help_request(item_id:str = Query(..., description = "The help request item to delete.")):
  
     for item in help_requests:
@@ -292,7 +292,7 @@ class UpdateCancellation(BaseModel):
 
 cancellation_events: List[Cancellation] = []
 
-@app.get("/get-cancellation-event/{id},{client_id}")
+@app.get("/api/v1/get-cancellation-event/{id},{client_id}")
 def get_cancellations(id:str, client_id:str):
 
     for index,item in enumerate(cancellation_events): 
@@ -301,7 +301,7 @@ def get_cancellations(id:str, client_id:str):
 
     raise HTTPException(status_code=404,detail="Cancellation Event not found.")
 
-@app.post("/create-cancellation-event")
+@app.post("/api/v1/create-cancellation-event")
 def create_cancellation(cancellation: Cancellation):
     
     if search_id_found(cancellation.id, cancellation_events):
@@ -311,26 +311,28 @@ def create_cancellation(cancellation: Cancellation):
     return {"Success":"Successfully created Cancellation Event."}
 
 
-@app.put("/update-cancellation-event/{item_id}")
+@app.put("/api/v1/update-cancellation-event/{item_id}")
 def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
     
 
     for index,item in enumerate(cancellation_events): 
 
-        if cancellation.client_id != None:
-            cancellation_events[index].client_id = item.client_id
+        if item.id == item_id:
 
-        if cancellation.cancellation_reason != None:
-             cancellation_events[index].cancellation_reason = cancellation.cancellation_reason 
+            if cancellation.client_id != None:
+                cancellation_events[index].client_id = item.client_id
 
-        return {"Success":"Successfully updated Cancellation Event"}
+            if cancellation.cancellation_reason != None:
+                cancellation_events[index].cancellation_reason = cancellation.cancellation_reason 
+
+            return {"Success":"Successfully updated Cancellation Event"}
 
     raise HTTPException(status_code=404,detail="Cancellation Event not found.")
              
 
 
 
-@app.delete("/delete-cancellation-event/{item_id}")
+@app.delete("/api/v1/delete-cancellation-event/{item_id}")
 def delete_rescue_request(item_id:str = Query(..., description = "The id item to delete.")):
 
     for item in cancellation_events: 
