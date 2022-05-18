@@ -57,12 +57,7 @@ def create_user(user: User):
         raise HTTPException(status_code=409, detail="User already exist")
 
     users.append(user)
-    return {"Success": "Successfully created user."}
-        
-
-
-
-
+    return {"Success": "Successfully created User."}
 
 
 @app.put("/update-user/{item_id}")
@@ -80,16 +75,12 @@ def update_user(item_id:str, user:UpdateUser):
             if user.location != None:
                 users[index].location = user.location    
 
-            return {"Success":"Successfully updated user."}
+            return {"Success":"Successfully updated User."}
 
         else: 
             raise HTTPException(status_code=404, detail="User not found")
 
   
-
-
-
-
 
 @app.delete("/delete-user/{item_id}")
 def delete_user(item_id:str = Query(..., description = "The id item to delete.")): 
@@ -97,9 +88,9 @@ def delete_user(item_id:str = Query(..., description = "The id item to delete.")
     for item in users:
         if item.id == item_id: 
             users.remove(item)  
-            return {"Success":"Item Deleted!"}
+            return {"Success":"User Deleted!"}
 
-    raise HTTPException(status_code=404, detail="Item not found")
+    raise HTTPException(status_code=404, detail="User not found")
 
 
 
@@ -137,48 +128,60 @@ class UpdateUserAssistance(BaseModel):
     confirmationDetails:Optional[ConfirmationDetail] = None    
     status:Optional[Status] = None    
 
-users_assistance = {}
+users_assistance:List[UserAssistance] = []
 
 
 @app.get("/get-user-assistance-by-id/{user_id}")
 def get_assistance_by_id(user_id: str):
-    for item_id in users_assistance:
-        if users_assistance[item_id].id == user_id:
-            return users_assistance[item_id]
-    raise HTTPException(status_code=404, detail="User not found!")
 
+    for index, item in enumerate(users_assistance): 
+        if item.id == user_id:
+            return users_assistance[index]
+
+    raise HTTPException(status_code=404, detail="User not found!")
+    
 @app.get("/get-users-assistance")
 def get_assistance(): 
     return users_assistance
 
 @app.post("/create-user-assistance")
 def create_user_assistance(assistance: UserAssistance):
-    if assistance.id in users_assistance:
-        raise HTTPException(status_code=409, detail="User already exists!")
-    users_assistance[assistance.id] = assistance
-    return users_assistance[assistance.id]
+
+    if search_id_found(assistance.id, users_assistance):
+       raise HTTPException(status_code=409, detail="User already exists!") 
+
+    users_assistance.append(assistance) 
+    return {"Success":"Successfully created User Assistance."}  
+
 
 @app.put("/update-user-assistance/{item_id}")
 def update_user_assistance(item_id: str, user: UpdateUserAssistance):
-    
-    if item_id not in users_assistance:
-        raise HTTPException(status_code=404, detail="User not found.")
  
-    if user.confirmationDetails != None:
-        users_assistance[item_id].confirmationDetails = user.confirmationDetails     
+    for index, item in enumerate(users_assistance): 
+        if item.id == item_id: 
 
-    if user.status != None:
-        users_assistance[item_id].status = user.status
+             if user.confirmationDetails != None:
+                  users_assistance[index].confirmationDetails = user.confirmationDetails     
 
-    return users_assistance[item_id]
-    
+             if user.status != None:
+                  users_assistance[index].status = user.status 
+
+             return {"Success":"Successfully Updated User Assistance"}    
+
+        else: 
+            raise HTTPException(status_code=404, detail="User not found.")     
+
+
 @app.delete("/delete-user-assistance/{item_id}")
 def delete_user_assistance(item_id:str = Query(..., description = "The id item to delete.")):
-    if item_id not in users_assistance: 
-        raise HTTPException(status_code=404, detail="User not found.")
 
-    del users_assistance[item_id]  
-    return {"Success":"Successfully Deleted!"} 
+    for item in users_assistance: 
+        if item.id == item_id: 
+            users_assistance.remove(item)
+            return {"Success":"User Assistance Deleted!"}
+
+    raise HTTPException(status_code=404, detail="User Assistance not found.")
+         
 
 
 
@@ -199,7 +202,7 @@ class UpdateHelpRequest(BaseModel):
     accepted:Optional[bool] = None
 
 
-help_request = {}
+help_request: List[HelpRequest] = []
 
 @app.get("/get-help-requests")
 def get_help_requests(): 
