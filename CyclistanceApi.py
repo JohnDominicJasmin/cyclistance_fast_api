@@ -202,48 +202,54 @@ class UpdateHelpRequest(BaseModel):
     accepted:Optional[bool] = None
 
 
-help_request: List[HelpRequest] = []
+help_requests: List[HelpRequest] = []
 
 @app.get("/get-help-requests")
 def get_help_requests(): 
-    return help_request
+    return help_requests
 
 @app.get("/get-help-request-by-id/{id},{client_id}")
 def get_help_request_by_id(id:str, client_id:str): 
-    for item_id in help_request: 
-        if help_request[item_id].id == id and help_request[item_id].client_id == client_id:
-            return help_request[item_id]
-    raise HTTPException(status_code=404, detail="User not found.")         
+    for index, item in enumerate(help_requests):
+        if item.id == id and item.client_id == client_id:
+            return help_requests[index]
+    raise HTTPException(status_code=404, detail="Help Request not found.")  
+
 
 @app.post("/create-help-request")
 def create_help_request(request: HelpRequest):
-    if request.id in help_request:
-        raise HTTPException(status_code=409, detail="Item ID already exists.")
-    help_request[request.id] = request    
-    return help_request[request.id]
+    if search_id_found(request.id, help_requests):
+        raise HTTPException(status_code=409, detail="Help Request already exists.")
+
+    help_requests.append(request)
+    return {"Success":"Successfully created Help Request."}
 
 @app.put("/update-help-request/{item_id}")
 def update_help_request(item_id:str, request: UpdateHelpRequest):
 
-    if item_id not in help_request:
-        raise HTTPException(status_code=404, detail="Item does not exist.")
+    for index, item in enumerate(help_requests):
+        if item.id == item_id:
 
-    if request.client_id != None:
-        help_request[item_id].client_id = request.client_id
+            if request.client_id != None:
+                help_requests[index].client_id = request.client_id
 
-    if request.accepted != None:
-        help_request[item_id].accepted = request.accepted    
+            if request.accepted != None:
+                help_requests[index].accepted = request.accepted
 
-    return help_request[item_id]        
+            return {"Success":"Successfully Updated Help Request."}    
+
+        else:
+            raise HTTPException(status_code=404, detail="Help Request does not exist.")       
 
 @app.delete("delete-help-request/{item_id}")
-def delete_help_request(item_id:str = Query(..., description = "The id item to delete.")):
-    if item_id not in help_request:
-        raise HTTPException(status_code=404, detail="Item does not exist.")
+def delete_help_request(item_id:str = Query(..., description = "The help request item to delete.")):
+ 
+    for item in help_requests:
+        if item.id == item_id:
+            help_requests.remove(item)
+            return {"Success":"Help Request Deleted!"}
 
-    del help_request[item_id]
-    return {"Success":"Successfully Deleted."}    
-
+    raise HTTPException(status_code=404, detail="Help Request does not exist.")        
 
 
 
