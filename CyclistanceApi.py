@@ -61,7 +61,7 @@ def create_user(user: User):
     return {"Success": "Successfully created User."}
 
 
-@app.put("/api/v1/update-user/{item_id}")
+@app.patch("/api/v1/update-user/{item_id}")
 def update_user(item_id:str, user:UpdateUser):
 
     for index,item in enumerate(users): 
@@ -165,7 +165,7 @@ def create_user_assistance(assistance: UserAssistance):
     return {"Success":"Successfully created User Assistance."}  
 
 
-@app.put("/api/v1/update-user-assistance/{item_id}")
+@app.patch("/api/v1/update-user-assistance/{item_id}")
 def update_user_assistance(item_id: str, user: UpdateUserAssistance):
  
     for index, item in enumerate(users_assistance): 
@@ -242,7 +242,7 @@ def create_help_request(request: HelpRequest):
     help_requests.append(request)
     return {"Success":"Successfully created Help Request."}
 
-@app.put("/api/v1/update-help-request/{item_id}")
+@app.patch("/api/v1/update-help-request/{item_id}")
 def update_help_request(item_id:str, request: UpdateHelpRequest):
 
     for index, item in enumerate(help_requests):
@@ -279,7 +279,7 @@ class CancellationReason(BaseModel):
     message:str
 
 
-class Cancellation(BaseModel):
+class CancellationEvent(BaseModel):
     id:str
     client_id:str 
     cancellation_reason:list[CancellationReason]
@@ -290,10 +290,10 @@ class UpdateCancellation(BaseModel):
 
 
 
-cancellation_events: List[Cancellation] = []
+cancellation_events: List[CancellationEvent] = []
 
 @app.get("/api/v1/get-cancellation-event/{id},{client_id}")
-def get_cancellations(id:str, client_id:str):
+def get_cancellation(id:str, client_id:str):
 
     for index,item in enumerate(cancellation_events): 
         if item.id == id and item.client_id == client_id:
@@ -302,7 +302,7 @@ def get_cancellations(id:str, client_id:str):
     raise HTTPException(status_code=404,detail="Cancellation Event not found.")
 
 @app.post("/api/v1/create-cancellation-event")
-def create_cancellation(cancellation: Cancellation):
+def create_cancellation(cancellation: CancellationEvent):
     
     if search_id_found(cancellation.id, cancellation_events):
         raise HTTPException(status_code=409,detail="Cancellation Event already exist.")
@@ -311,7 +311,7 @@ def create_cancellation(cancellation: Cancellation):
     return {"Success":"Successfully created Cancellation Event."}
 
 
-@app.put("/api/v1/update-cancellation-event/{item_id}")
+@app.patch("/api/v1/update-cancellation-event/{item_id}")
 def update_cancellation_reason(item_id:str, cancellation: UpdateCancellation):
     
 
