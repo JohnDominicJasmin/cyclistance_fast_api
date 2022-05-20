@@ -4,6 +4,7 @@ from asyncio import StreamWriter
 from calendar import c
 from lib2to3.pgen2.token import OP
 from queue import Queue
+from re import S
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from pydantic import BaseModel
 from typing import Optional, List
@@ -33,8 +34,8 @@ class UpdateUser(BaseModel):
     address:Optional[str] = None
     location:Optional[Location] = None 
 
-#TODO:Filter getting nearby location using lat lng 
-#TODO: Create function for searching
+
+
   
 users: List[User] = []
 
@@ -107,14 +108,17 @@ def delete_user(item_id:str = Query(..., description = "The id item to delete.")
 
 
 
-class Respondent(BaseModel):
-    client_id:str
 
-class RescueRequest(BaseModel):
-    respondents:list[Respondent]
-    
-class UpdateRescueRequest(BaseModel):
-    respondents:Optional[list[Respondent]] = None 
+
+
+
+
+
+
+
+
+
+
 
 class ConfirmationDetail(BaseModel):
     address:str
@@ -132,12 +136,11 @@ class UserAssistance(BaseModel):
     id:str
     confirmationDetails: ConfirmationDetail
     status:Status
-    rescueRequest:RescueRequest
 
 class UpdateUserAssistance(BaseModel):
     confirmationDetails:Optional[ConfirmationDetail] = None    
     status:Optional[Status] = None    
-    rescueRequest:Optional[RescueRequest] = None
+ 
 
 users_assistance:List[UserAssistance] = []
 
@@ -177,9 +180,7 @@ def update_user_assistance(item_id: str, user: UpdateUserAssistance):
              if user.status != None:
                   users_assistance[index].status = user.status 
 
-             if user.rescueRequest != None:
-                 users_assistance[index].rescueRequest = user.rescueRequest
-
+        
              return {"Success":"Successfully Updated User Assistance"}    
 
     raise HTTPException(status_code=404, detail="User Assistance not found.")     
@@ -199,74 +200,85 @@ def delete_user_assistance(item_id:str = Query(..., description = "The id item t
 
 
 
+#TODO test if we can remove Update class because we are using patch instead of put
 
 
 
-
-
-
-
-
-
-
-class HelpRequest(BaseModel):
-    id:str
-    client_id:str 
-    accepted:bool
-
-class UpdateHelpRequest(BaseModel):
-     
-    client_id:Optional[str] = None 
-    accepted:Optional[bool] = None
-
-
-help_requests: List[HelpRequest] = []
-
-
-
-@app.get("/api/v1/get-help-request-by-id/{id},{client_id}")
-def get_help_request_by_id(id:str, client_id:str): 
-    for index, item in enumerate(help_requests):
-        if item.id == id and item.client_id == client_id:
-            return help_requests[index]
-
-    raise HTTPException(status_code=404, detail="Help Request not found.")  
-
-
-@app.post("/api/v1/create-help-request")
-def create_help_request(request: HelpRequest):
-
-    if search_id_found(request.id, help_requests):
-        raise HTTPException(status_code=409, detail="Help Request already exists.")
-
-    help_requests.append(request)
-    return {"Success":"Successfully created Help Request."}
-
-@app.patch("/api/v1/update-help-request/{item_id}")
-def update_help_request(item_id:str, request: UpdateHelpRequest):
-
-    for index, item in enumerate(help_requests):
-        if item.id == item_id:
-
-            if request.client_id != None:
-                help_requests[index].client_id = request.client_id
-
-            if request.accepted != None:
-                help_requests[index].accepted = request.accepted
-
-            return {"Success":"Successfully Updated Help Request."}   
-    
-    raise HTTPException(status_code=404, detail="Help Request does not exist.")        
-
-@app.delete("/api/v1/delete-help-request/{item_id}")
-def delete_help_request(item_id:str = Query(..., description = "The help request item to delete.")):
+class Respondent(BaseModel):
+    client_id:str
+    request_accepted: bool
  
-    for item in help_requests:
-        if item.id == item_id:
-            help_requests.remove(item)
-            return {"Success":"Help Request Deleted!"}
+class RescueRequest(BaseModel):
+    rescue_event_id:str
+    respondents:list[Respondent]
+    
+class UpdateRescueRequest(BaseModel):
+    respondents:Optional[list[Respondent]] = None 
 
-    raise HTTPException(status_code=404, detail="Help Request does not exist.")        
+
+rescue_request:List[RescueRequest] = []
+
+
+
+
+@app.get("/api/v1/get-rescue-request/{event_id}")
+def get_rescue_request(event_id:str):
+    
+    for index,item in enumerate(rescue_request):
+        if item.rescue_event_id == event_id:
+            return rescue_request[index]
+
+    raise HTTPException(status_code=404, detail="Rescue Request not found.")
+
+
+@app.post("/api/v1/create-rescue-request")  
+def create_rescue_request(rescueRequest:RescueRequest):
+
+      if search_id_found(rescueRequest.rescue_event_id, rescue_request):
+          raise HTTPException(status_code=409, detail="Rescue Request already exist.")
+
+      rescue_request.append(rescueRequest)
+      return{"Success":"Successfully created Rescue Request."}
+
+
+
+@app.patch("/api/v1/update-rescue-request/{event_id}")
+def update_rescue_request(event_id:str, update_rescue_request: UpdateRescueRequest):
+
+    for index,item in enumerate(rescue_request):
+        if item.rescue_event_id == event_id:
+
+            if update_rescue_request.respondents != None:
+                rescue_request[index].respondents = update_rescue_request.respondents
+
+            return{"Success":"Successfully Updated Rescue Request."}
+
+    raise HTTPException(status_code=404, detail = "Rescue Request not found.")        
+
+
+
+@app.delete("/api/v1/delete-rescue-request/{event_id}")
+def delete_rescue_request(event_id:str =  Query(..., description = "The id item to delete.")):
+    
+    for index,item in enumerate(rescue_request):
+        if item.id == event_id:
+            rescue_request.remove(item)
+            return {"Success":"Rescue Request Deleted!"}
+
+    raise HTTPException(status_code=404, detail = "Rescue Request not found!")        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
