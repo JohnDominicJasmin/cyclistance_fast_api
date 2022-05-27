@@ -17,6 +17,23 @@ def search_id_found(user_id, _list):
     return user_id in (list.id for list in _list)
 
 
+class ConfirmationDetail(BaseModel):
+    address:str
+    bike_type:str
+    description:str
+    message:str
+
+class Status(BaseModel):
+    searching:bool
+    started:bool
+    ongoing:bool
+    finished:bool
+
+class UserAssistance(BaseModel):
+    confirmationDetails: ConfirmationDetail
+    status:Status
+
+
 class Location(BaseModel):
     lat: str
     lng: str
@@ -27,12 +44,15 @@ class User(BaseModel):
     name:str
     address:str
     location:Location
+    user_assistance: UserAssistance
 
 
 class UpdateUser(BaseModel):
     name:Optional[str] = None
     address:Optional[str] = None
     location:Optional[Location] = None 
+    user_assistance: Optional[UserAssistance] = None
+
 
 
 
@@ -77,6 +97,9 @@ def update_user(item_id:str, user:UpdateUser):
             if user.location != None:
                 users[index].location = user.location    
 
+            if user.user_assistance != None:
+                users[index].user_assistance = user.user_assistance 
+
             return {"Success":"Successfully updated User."}
 
        
@@ -102,105 +125,10 @@ def delete_user(item_id:str = Query(..., description = "The id item to delete.")
 
 
 
+#TODO: make user assistance nullable
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class ConfirmationDetail(BaseModel):
-    address:str
-    bike_type:str
-    description:str
-    message:str
-
-class Status(BaseModel):
-    searching:bool
-    started:bool
-    ongoing:bool
-    finished:bool
-
-class UserAssistance(BaseModel):
-    id:str
-    confirmationDetails: ConfirmationDetail
-    status:Status
-
-class UpdateUserAssistance(BaseModel):
-    confirmationDetails:Optional[ConfirmationDetail] = None    
-    status:Optional[Status] = None    
- 
-
-users_assistance:List[UserAssistance] = []
-
-
-@app.get("/api/v1/get-user-assistance-by-id/{user_id}")
-def get_assistance_by_id(user_id: str):
-
-    for index, item in enumerate(users_assistance): 
-        if item.id == user_id:
-            return users_assistance[index]
-
-    raise HTTPException(status_code=404, detail="User Assistance not found!")
-    
-@app.get("/api/v1/get-users-assistance")
-def get_assistance(): 
-    return users_assistance
-
-@app.post("/api/v1/create-user-assistance")
-def create_user_assistance(assistance: UserAssistance):
-
-    if search_id_found(assistance.id, users_assistance):
-       raise HTTPException(status_code=409, detail="User Assistance already exists!") 
-
-    users_assistance.append(assistance) 
-    return {"Success":"Successfully created User Assistance."}  
-
-
-@app.patch("/api/v1/update-user-assistance/{item_id}")
-def update_user_assistance(item_id: str, user: UpdateUserAssistance):
- 
-    for index, item in enumerate(users_assistance): 
-        if item.id == item_id: 
-
-             if user.confirmationDetails != None:
-                  users_assistance[index].confirmationDetails = user.confirmationDetails     
-
-             if user.status != None:
-                  users_assistance[index].status = user.status 
-
-        
-             return {"Success":"Successfully Updated User Assistance"}    
-
-    raise HTTPException(status_code=404, detail="User Assistance not found.")     
-
-
-@app.delete("/api/v1/delete-user-assistance/{item_id}")
-def delete_user_assistance(item_id:str = Query(..., description = "The id item to delete.")):
-
-    for item in users_assistance: 
-        if item.id == item_id: 
-            users_assistance.remove(item)
-            return {"Success":"User Assistance Deleted!"}
-
-    raise HTTPException(status_code=404, detail="User Assistance not found.")
-         
-
-
-
-
-#TODO test if we can remove Update class because we are using patch instead of put
 
 
 
