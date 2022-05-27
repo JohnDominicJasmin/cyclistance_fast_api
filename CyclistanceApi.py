@@ -44,6 +44,7 @@ class User(BaseModel):
     name:str
     address:str
     location:Location
+    user_needed_help: bool
     user_assistance: UserAssistance
 
 
@@ -51,6 +52,7 @@ class UpdateUser(BaseModel):
     name:Optional[str] = None
     address:Optional[str] = None
     location:Optional[Location] = None 
+    user_needed_help: bool = False
     user_assistance: Optional[UserAssistance] = None
 
 
