@@ -77,11 +77,11 @@ def get_users():
 
 @app.post("/api/v1/create-user")
 def create_user(user: User):
-    if search_id_found(user.id, users):
-        raise HTTPException(status_code=409, detail="User already exist")
+    if not search_id_found(user.id, users):
+        users.append(user)
+        return {"Success": "Successfully created User."}
 
-    users.append(user)
-    return {"Success": "Successfully created User."}
+
 
 
 @app.patch("/api/v1/update-user/{item_id}")
@@ -164,11 +164,11 @@ def get_rescue_request(event_id:str):
 @app.post("/api/v1/create-rescue-request")  
 def create_rescue_request(rescueRequest:RescueRequest):
 
-      if search_id_found(rescueRequest.rescue_event_id, rescue_request):
-          raise HTTPException(status_code=409, detail="Rescue Request already exist.")
+      if not search_id_found(rescueRequest.rescue_event_id, rescue_request):
+        rescue_request.append(rescueRequest)
+        return{"Success":"Successfully created Rescue Request."}
 
-      rescue_request.append(rescueRequest)
-      return{"Success":"Successfully created Rescue Request."}
+       
 
 
 
@@ -246,11 +246,10 @@ def get_cancellation(id:str, client_id:str):
 @app.post("/api/v1/create-cancellation-event")
 def create_cancellation(cancellation: CancellationEvent):
     
-    if search_id_found(cancellation.id, cancellation_events):
-        raise HTTPException(status_code=409,detail="Cancellation Event already exist.")
+    if not search_id_found(cancellation.id, cancellation_events):
+        cancellation_events.append(cancellation)
+        return {"Success":"Successfully created Cancellation Event."}
 
-    cancellation_events.append(cancellation)
-    return {"Success":"Successfully created Cancellation Event."}
 
 
 @app.patch("/api/v1/update-cancellation-event/{item_id}")
