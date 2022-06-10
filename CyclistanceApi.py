@@ -43,6 +43,8 @@ class User(BaseModel):
     id:str
     name:str
     address:str
+    profile_picture_url:str
+    contact_number:str
     location:Location
     user_needed_help: bool
     user_assistance: UserAssistance
@@ -124,10 +126,6 @@ def delete_user(item_id:str = Query(..., description = "The id item to delete.")
 
 
 
-
-
-
-#TODO: make user assistance nullable
 
 
 
