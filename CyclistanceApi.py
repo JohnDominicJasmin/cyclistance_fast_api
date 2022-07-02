@@ -18,7 +18,6 @@ def search_id_found(user_id, _list):
 
 
 class ConfirmationDetail(BaseModel):
-    address:str
     bike_type:str
     description:str
     message:str
