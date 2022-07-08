@@ -52,6 +52,8 @@ class User(BaseModel):
 class UpdateUser(BaseModel):
     name:Optional[str] = None
     address:Optional[str] = None
+    profile_picture_url:Optional[str] = None
+    contact_number:Optional[str] = None
     location:Optional[Location] = None 
     user_needed_help: bool = False
     user_assistance: Optional[UserAssistance] = None
